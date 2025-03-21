@@ -1,0 +1,89 @@
+#!/usr/bin/python3
+
+import sys
+import os
+
+import tokenizer
+import translator
+
+HELP = """Usage: sabbah <input> [OPTIONS]
+
+Description:
+  Compiles sabbahscript into C, assembly or an executable.
+
+General options:
+  -h, --help         Show this help message and exit.
+  -o, --output FILE  Specify the output file.
+  -v, --verbose      Enable verbose output.
+
+Compilation options:
+  -s, --asm          Compile into assembler language.
+  -c, --c            Compile into C.
+
+Examples:
+  sabbah example.sbs
+  sabbah example.sbs -o example
+  sabbah example.sbs -o example.s --asm
+"""
+
+if len(sys.argv) == 1:
+    print(HELP)
+    exit(0)
+
+def showHelpAndExit():
+    print(HELP)
+    exit(0)
+argn = 2 if not sys.argv[1] in ["-h", "--help"] else showHelpAndExit()
+
+_in: str = sys.argv[1]
+out: str = "out"
+
+mode: str = None
+
+while argn < len(sys.argv):
+    match sys.argv[argn]:
+        case "--help" | "-h":
+            if len(sys.argv) > 2:
+                print(f"(ignoring all other args)")
+            print(HELP)
+            sys.exit(0)
+        case "--output" | "-o":
+            if argn + 1 > len(sys.argv):
+                print("no output file specified! compilation failed!")
+                exit(1)
+            else:
+                out = sys.argv[argn + 1]
+                argn += 1
+        case "--asm" | "-s":
+            if mode == None:
+                mode = "asm"
+            else:
+                print("more than one compilation mode set! compilation failed!")
+                exit(2)
+        case "--c" | "-c":
+            if mode == None:
+                mode = "c"
+            else:
+                print("more than one compilation mode set! compilation failed!")
+                exit(2)
+    argn += 1
+
+mode = "exec" if mode == None else mode
+
+code: str
+with open(_in, 'r') as file:
+    code = file.read()
+
+tokenized:  list[tokenizer.Token] =                       tokenizer.tokenize(code)
+translated:                   str =                translator.translate(tokenized)
+built:                        str = translator.build(translated[0], translated[1])
+
+with open({"c": out, "exec": "tmp.c", "asm": "tmp.c"}[mode], 'w') as file: file.write(built)
+
+match mode:
+    case "exec":
+        os.system(f"gcc tmp.c -o {out}")
+    case "asm":
+        os.system(f"gcc tmp.c -o {out} -S")
+
+os.system("rm tmp.c") if mode in ["asm", "exec"] else None
