@@ -28,6 +28,7 @@ def translate(tokens: list[list[Token]], indent=4) -> str:
                     mainf += f"{tokens[i][j+1].value} {tokens[i][j+2].value}"
                     j += 5
             elif isinstance(tokens[i][j], VariableReference):
+                print("Hello")
                 mainf += f"{tokens[i][j].value} "
             elif isinstance(tokens[i][j], Assigner):
                 mainf += f"= "
