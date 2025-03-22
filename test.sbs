@@ -1,1 +1,2 @@
-exit 341;
+let int hello = 3;
+hello = 45;

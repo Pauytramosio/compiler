@@ -1,5 +1,4 @@
-import tokenizer, translator
-tokenized = tokenizer.tokenize("exit 31;")
-translated = translator.translate(tokenized)
-built = translator.build(translated[0], translated[1])
-print(built)
+import tokenizer, tree
+with open("test.sbs", "r") as file:
+    text = file.read()
+    tree.print_tree(tokenizer.tokenize(text))
