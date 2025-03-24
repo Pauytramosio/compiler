@@ -1,2 +1,0 @@
-let int hello = 3;
-hello = 45;

@@ -3,7 +3,7 @@ from tokenizer import *
 #%%
 def translate(tokens: list[list[Token]], indent=4) -> str:
     i: int = 0
-    j: int = 0
+    j: int
 
     mainf:       str  = str()
     include: set[str] = set()
@@ -13,9 +13,9 @@ def translate(tokens: list[list[Token]], indent=4) -> str:
     }
 
     while i < len(tokens):
-        print(tokens[i])
+        j = 0
+        mainf += indent * ' '
         while j < len(tokens[i]):
-            mainf += indent * ' '
             if isinstance(tokens[i][j], Keyword):
                 if isinstance(tokens[i][j], ExitKeyword):
                     include.add("stdlib.h")
@@ -28,13 +28,14 @@ def translate(tokens: list[list[Token]], indent=4) -> str:
                     mainf += f"{tokens[i][j+1].value} {tokens[i][j+2].value}"
                     j += 5
             elif isinstance(tokens[i][j], VariableReference):
-                print("Hello")
                 mainf += f"{tokens[i][j].value} "
+                j += 1
             elif isinstance(tokens[i][j], Assigner):
                 mainf += f"= "
+                j += 1
             elif isinstance(tokens[i][j], IntLiteral):
                 mainf += f"{tokens[i][j].value} "
-        mainf = mainf.strip()
+                j += 1
         mainf += ";\n"
         i += 1
     

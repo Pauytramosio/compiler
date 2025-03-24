@@ -47,7 +47,7 @@ class DeclareKeyword(Keyword):
     def __init__(self):
         super().__init__()
 
-class Assigner(Keyword):
+class Assigner(Token):
     def __init__(self):
         super().__init__()
 
@@ -95,14 +95,6 @@ def tokenize(scope: str) -> list:
             if current == "exit":
                 statement.append(ExitKeyword())
                 while chars.isspace(scope[ichar]): ichar += 1
-                if chars.isdigit(scope[ichar]):
-                    num_str: str = str()
-                    while chars.isdigit(scope[ichar]):
-                        num_str += scope[ichar]
-                        ichar += 1
-                    statement.append(IntLiteral(num_str))
-                tokens.append(statement)
-                statement = list()
             elif current == "declare":
                 statement.append(DeclareKeyword())
                 while chars.isspace(scope[ichar]): ichar += 1

@@ -6,10 +6,10 @@ import os
 import tokenizer
 import translator
 
-HELP = """Usage: axiom <input> [OPTIONS]
+HELP = """Usage: sabbah <input> [OPTIONS]
 
 Description:
-  Compiles Axiom into C, assembly or an executable.
+  Compiles Sabbahscript into C, assembly or an executable.
 
 General options:
   -h, --help         Show this help message and exit.
@@ -21,9 +21,9 @@ Compilation options:
   -c, --c            Compile into C.
 
 Examples:
-  axiom example.xom
-  axiom example.xom -o example
-  axio, example.xom -o example.s --asm
+  axiom example.sbs
+  axiom example.sbs -o example
+  axio, example.sbs -o example.s --asm
 """
 
 if len(sys.argv) == 1:

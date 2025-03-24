@@ -1,4 +1,7 @@
 import tokenizer, tree
-with open("test.sbs", "r") as file:
+with open("test.xom", "r") as file:
     text = file.read()
-    tree.print_tree(tokenizer.tokenize(text))
+
+for textt in tokenizer.tokenize(text):
+    print(textt)
+    print(" KREO ")
