@@ -7,6 +7,12 @@ def translate(tokens: list[list[Token]], indent=4) -> str:
 
     mainf:       str  = str()
     include: set[str] = set()
+    builtintypes: list[str] = [
+        """typedef struct {
+    void (*run)(void*);  // Function pointer with a void* parameter
+    void* arg;           // Argument to pass to the function
+} Runnable;""",
+    ]
 
     TYPES: dict[str, str] = {
         "int": "int",
@@ -38,10 +44,15 @@ def translate(tokens: list[list[Token]], indent=4) -> str:
                 j += 1
         mainf += ";\n"
         i += 1
+    mainf += indent * ' '
+    mainf += "exit(0);\n"
+    include.add("stdlib.h")
     
-    return (mainf, include)
+    types = builtintypes.copy()
+    return (mainf, include, types)
 
-def build(mainf: str, include: set[str]) -> str:
+def build(mainf: str, include: set[str], types) -> str:
     include = "\n".join([f"#include <{i}>" for i in include]) if len(include) > 0 else ""
-    return f"""{include}\n\nint main() {{\n{mainf[:-1]}\n}}"""
+    types = "\n".join([f"{i}" for i in types]) if len(types) > 0 else ""
+    return f"""{include}\n\n{types}\n\nint main() {{\n{mainf[:-1]}\n}}"""
 # %%

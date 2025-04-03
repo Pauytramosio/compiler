@@ -75,7 +75,7 @@ with open(_in, 'r') as file:
 
 tokenized:  list[tokenizer.Token] =                       tokenizer.tokenize(code)
 translated:                   str =                translator.translate(tokenized)
-built:                        str = translator.build(translated[0], translated[1])
+built:                        str = translator.build(translated[0], translated[1], translated[2])
 
 with open({"c": out, "exec": "tmp.c", "asm": "tmp.c"}[mode], 'w') as file: file.write(built)
 

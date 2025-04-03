@@ -69,6 +69,13 @@ class ScriptLiteral(Literal):
         super().__init__(value)
 
 
+class FunctionKeyword(Keyword):
+    def __init__(self, args):
+        super().__init__()
+        self.args = args
+    def __repr__(self):
+        return f"{type(self)}-value:{self.value}-args:{self.args}@{id(self)}"
+
 #%%
 
 def tokenize(scope: str) -> list:
@@ -94,7 +101,6 @@ def tokenize(scope: str) -> list:
                 ichar += 1
             if current == "exit":
                 statement.append(ExitKeyword())
-                while chars.isspace(scope[ichar]): ichar += 1
             elif current == "declare":
                 statement.append(DeclareKeyword())
                 while chars.isspace(scope[ichar]): ichar += 1

@@ -1,3 +1,3 @@
-let int hello = 3;
-hello = 4;
+declare int hello;
+hello = 0;
 exit hello;
