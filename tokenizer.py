@@ -68,6 +68,9 @@ class ScriptLiteral(Literal):
     def __init__(self, value):
         super().__init__(value)
 
+class Operator(Token):
+    def __init__(self, value):
+        super().__init__(value)
 
 class FunctionKeyword(Keyword):
     def __init__(self, args):
@@ -155,6 +158,9 @@ def tokenize(scope: str) -> list:
                 ichar += 1
         elif scope[ichar] == '=':
             statement.append(Assigner())
+            ichar += 1
+        elif scope[ichar] in "+-*/":
+            statement.append(Operator(scope[ichar]))
             ichar += 1
         else:
             raise RuntimeError(f"Unrecognized character: {scope[ichar]}")

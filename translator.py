@@ -42,6 +42,9 @@ def translate(tokens: list[list[Token]], indent=4) -> str:
             elif isinstance(tokens[i][j], IntLiteral):
                 mainf += f"{tokens[i][j].value} "
                 j += 1
+            elif isinstance(tokens[i][j], Operator):
+                mainf += f"{tokens[i][j].value} "
+                j += 1
         mainf += ";\n"
         i += 1
     mainf += indent * ' '
