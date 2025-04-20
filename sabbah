@@ -1,0 +1,105 @@
+#!/usr/bin/python3
+
+import os
+import sys
+
+import static
+
+
+def error(msg: str, fatal=True) -> None:
+    print(f"{ {True: "ERROR", False: "WARNING"}[fatal]}: {msg}")
+
+with open("./help.txt")    as f: HELP    = f.read()
+with open("./version.txt") as f: VERSION = f.read()
+
+def assemble(in_: str, out: str) -> None: os.system(f"nasm {in_} -o {out}")
+def     link(in_: str, out: str) -> None:   os.system(f"ld {in_} -o {out}")
+
+argc: int = len(sys.argv)
+
+if argc == 1:
+    error("no arguments specified. help:\n")
+    print(HELP)
+    sys.exit(static.EXIT_CODES["no arguments specified"])
+
+i = 1
+
+out_mode = "default"
+
+in_: str = None
+out: str = None
+
+def isvalidyn(s):
+    if len(s) == 0:
+        return False
+    elif not s.lower()[0] in ('y', 'n'):
+        return False
+    else:
+        return s.lower()[0]
+
+while i < argc:
+    if sys.argv[i].startswith('-'):
+        # Options
+        if sys.argv[i] in ("-h", "--help"):
+            print(HELP)
+            sys.exit(0)
+        elif sys.argv[i] in ("-v", "--version"):
+            print(VERSION)
+            sys.exit(0)
+        elif sys.argv[i] in ("-o", "--output"):
+            if i == argc - 1:
+                error("no output file specified. Usage:")
+                print(HELP)
+                sys.exit(static.EXIT_CODES["no output file specified"])
+            out = sys.argv[i + 1]
+            if os.path.exists(sys.argv[i + 1]):
+                error(f"output file {out} already exists. Do you want to overwrite it?", False)
+                ans = str()
+                while not isvalidyn(ans):
+                    ans = input("(Y/n)>> ")
+                if ans == 'y':
+                    print(f"overwriting 'out' param to '{out}'")
+                else:
+                    sys.exit(static.EXIT_CODES["output file already exists"])
+            i += 1
+        elif sys.argv[i] in ("-b", "--object"):
+            out_mode = "object"
+        elif sys.argv[i] in ("-s", "--asm"):
+            out_mode = "asm"
+        else:
+            error("invalid option.")
+            print(HELP)
+            sys.exit(static.EXIT_CODES["invalid option"])
+    elif i == 1:
+        in_ = sys.argv[i]
+        if not os.path.exists(sys.argv[i]):
+            error(f"input file {in_} does not exist. Do you want to force-compile it?", False)
+            ans = str()
+            while not isvalidyn(ans):
+                ans = input("(Y/n)>> ")
+            if ans == 'y':
+                print(f"forcing 'in_' param to '{in_}'")
+            else:
+                sys.exit(static.EXIT_CODES["input file does not exist"])
+    else:
+        error("invalid argument.")
+        print(HELP)
+        sys.exit(static.EXIT_CODES["invalid argument"])
+    i += 1
+
+if in_ == None:
+    error("no input file specified. Usage:")
+    print(HELP)
+    sys.exit(static.EXIT_CODES["no input file specified"])
+
+if out == None:
+    if in_.endswith(".sbb"):
+        out = in_[:-4]
+    else:
+        out = os.path.splitext(in_)[0]
+    
+    out += {"asm": ".s", "object": ".o", "default": ""}[out_mode]
+
+print(out)
+print(out_mode)
+print(in_)
