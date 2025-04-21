@@ -5,6 +5,22 @@ import sys
 
 import static
 
+import lexer
+import translator
+
+def get_free_nasmfile_name() -> str:
+    """Get a free file name in the current directory."""
+    i = 0
+    while os.path.exists(f"out_{i}.s"):
+        i += 1
+    return f"out_{i}.s"
+
+def get_free_object_name() -> str:
+    """Get a free object file name in the current directory."""
+    i = 0
+    while os.path.exists(f"out_{i}.o"):
+        i += 1
+    return f"out_{i}.o"
 
 def error(msg: str, fatal=True) -> None:
     print(f"{ {True: "ERROR", False: "WARNING"}[fatal]}: {msg}")
@@ -37,6 +53,8 @@ def isvalidyn(s):
     else:
         return s.lower()[0]
 
+forcecompiled = False
+
 while i < argc:
     if sys.argv[i].startswith('-'):
         # Options
@@ -60,6 +78,7 @@ while i < argc:
                 if ans == 'y':
                     print(f"overwriting 'out' param to '{out}'")
                 else:
+                    error("output file already exists")
                     sys.exit(static.EXIT_CODES["output file already exists"])
             i += 1
         elif sys.argv[i] in ("-b", "--object"):
@@ -79,7 +98,9 @@ while i < argc:
                 ans = input("(Y/n)>> ")
             if ans == 'y':
                 print(f"forcing 'in_' param to '{in_}'")
+                forcecompiled = True
             else:
+                error(f"input file {in_} does not exist")
                 sys.exit(static.EXIT_CODES["input file does not exist"])
     else:
         error("invalid argument.")
@@ -100,6 +121,29 @@ if out == None:
     
     out += {"asm": ".s", "object": ".o", "default": ""}[out_mode]
 
-print(out)
-print(out_mode)
-print(in_)
+errorcount = 0 # TODO: use this var
+
+with open(in_, "r") as f: source_code = f.read()
+tokenized = lexer.tokenize(source_code)
+
+ASSEMBLY_NAME = {True: out, False: get_free_nasmfile_name()}[out_mode == "asm"]
+OBJECT_NAME = {True: out, False: get_free_object_name()}[out_mode == "object"]
+
+with open(ASSEMBLY_NAME, 'w') as f: f.write(translator.translate(tokenized))
+
+if out_mode == "asm":
+    print(f"Successfully { {True: "force-", False: ""}[forcecompiled]}compiled file {in_} to NASM x86_64bit Assembly with {errorcount} errors.")
+    sys.exit(0)
+elif out_mode == "object":
+    os.system(f"nasm -f elf64 {ASSEMBLY_NAME} -o {out}")
+    os.system(f"rm {ASSEMBLY_NAME}")
+    print(f"Successfully { {True: "force-", False: ""}[forcecompiled]}compiled and linked file {in_} to an unlinked object file with {errorcount} errors.")
+    sys.exit(0)
+elif out_mode == "default":
+    os.system(f"nasm -f elf64 {ASSEMBLY_NAME} -o {OBJECT_NAME}")
+    os.system(f"ld {OBJECT_NAME} -o {out}")
+    os.system(f"rm {ASSEMBLY_NAME} {OBJECT_NAME}")
+    print(f"Successfully { {True: "force-", False: ""}[forcecompiled]}compiled and linked file {in_} to an executable with {errorcount} errors.")
+    sys.exit(0)
+else:
+    error("something went wrong.")

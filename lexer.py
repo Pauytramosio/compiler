@@ -21,8 +21,12 @@ class Token:
 
 class Expression(Token):
     def __init__(self, value: str):
-        super().__init__(type, value)
+        super().__init__(value)
 
+    def evaluate(self):
+        # Placeholder for expression evaluation logic
+        # This should be implemented for every type of expression
+        return self.value
     def __repr__(self):
         return f"Expression({self.value})"
     def __str__(self):
@@ -40,7 +44,7 @@ class Expression(Token):
 
 class Literal(Expression):
     def __init__(self, value: str):
-        super().__init__(type, value)
+        super().__init__(value)
 
     def __repr__(self):
         return f"Literal({self.value})"
@@ -59,8 +63,10 @@ class Literal(Expression):
 
 class IntegerLiteral(Literal):
     def __init__(self, value: str):
-        super().__init__(type, value)
-
+        super().__init__(value)
+    
+    def evaluate(self):
+        return self.value
     def __repr__(self):
         return f"IntegerLiteral({self.value})"
     def __str__(self):
@@ -78,7 +84,7 @@ class IntegerLiteral(Literal):
 
 class StringLiteral(Literal):
     def __init__(self, value: str):
-        super().__init__(type, value)
+        super().__init__(value)
 
     def __repr__(self):
         return f"StringLiteral({self.value})"
@@ -98,7 +104,7 @@ class StringLiteral(Literal):
 
 class Keyword(Token):
     def __init__(self, value: str):
-        super().__init__(type, value)
+        super().__init__(value)
 
     def __repr__(self):
         return f"Keyword({self.value})"
@@ -117,7 +123,7 @@ class Keyword(Token):
 
 class ExitKeyword(Token):
     def __init__(self, value: str):
-        super().__init__(type, value)
+        super().__init__(value)
 
     def __repr__(self):
         return f"ExitKeyword({self.value})"
@@ -145,4 +151,35 @@ class Statement:
 def tokenize(input_string: str) -> list[Statement]:
     inpstr = input_string
     del input_string
-    # to be continued hehe
+
+    # Initialize variables
+    statement = []
+    tokenized = []
+
+    charindex = 0
+    while charindex < len(inpstr):
+        if chars.isspace(inpstr[charindex]):
+            charindex += 1
+            continue
+        elif chars.isdigit(inpstr[charindex]):
+            current: str = str()
+            while chars.isdigit(inpstr[charindex]):
+                current += inpstr[charindex]
+                charindex += 1
+            statement.append(IntegerLiteral(current))
+        elif chars.isalpha(inpstr[charindex]):
+            current: str = str()
+            while chars.isalnum(inpstr[charindex]):
+                current += inpstr[charindex]
+                charindex += 1
+            if current == "exit":
+                statement.append(ExitKeyword(current))
+        elif inpstr[charindex] == ';':
+            tokenized.append(Statement(statement))
+            statement = []
+            charindex += 1
+        else:
+            print(f"Unknown character: {inpstr[charindex]}")
+            charindex = len(inpstr)
+            continue
+    return tokenized
