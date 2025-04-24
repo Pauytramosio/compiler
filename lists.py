@@ -58,3 +58,5 @@ digits: list[str] = [str(fig) for fig in range(10)]
 alphanumeric = alpha + digits
 
 whitespaces: list[str] = [' ', '\n']
+
+# this is a useless comment
