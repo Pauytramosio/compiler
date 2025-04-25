@@ -7,6 +7,7 @@ import static
 
 import lexer
 import translator
+import pre
 
 def get_free_nasmfile_name() -> str:
     """Get a free file name in the current directory."""
@@ -124,6 +125,7 @@ if out == None:
 errorcount = 0 # TODO: use this var
 
 with open(in_, "r") as f: source_code = f.read()
+source_code = pre.remove_comments(source_code)
 tokenized = lexer.tokenize(source_code)
 
 ASSEMBLY_NAME = {True: out, False: get_free_nasmfile_name()}[out_mode == "asm"]
