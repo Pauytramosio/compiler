@@ -5,10 +5,11 @@ Usage:
 
 Options:
   -o, --output <file>     Specify output file
-  -s, --asm               Compile to assembly only; do not assemble or link
+  -s, --asm               Compile to Assembly only; do not assemble or link
   -b, --object            Compile and assemble; do not link
   -v, --version           Show version information and exit
   -h, --help              Show this help message and exit
+  -t, --timestamp         Add a trailing timestamp comment in the compiled code
 
 Description:
   sabbahc is a command-line compiler for the Sabbah programming language. It
@@ -17,4 +18,4 @@ Description:
 Examples:
   sabbahc main.sabbah         # Compile and link (default output: sabbah.out)
   sabbahc main.sabbah -o prog # Compile and link, output to 'prog'
-  sabbahc main.sabbah -s      # Compile to assembly only
+  sabbahc main.sabbah -s      # Compile to Assembly only

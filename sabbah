@@ -46,6 +46,8 @@ out_mode = "default"
 in_: str = None
 out: str = None
 
+timestamp = False
+
 def isvalidyn(s):
     if len(s) == 0:
         return False
@@ -86,6 +88,8 @@ while i < argc:
             out_mode = "object"
         elif sys.argv[i] in ("-s", "--asm"):
             out_mode = "asm"
+        elif sys.argv[i] in ("-t", "--timestamp"):
+            timestamp = True
         else:
             error("invalid option.")
             print(HELP)
@@ -131,7 +135,7 @@ tokenized = lexer.tokenize(source_code)
 ASSEMBLY_NAME = {True: out, False: get_free_nasmfile_name()}[out_mode == "asm"]
 OBJECT_NAME = {True: out, False: get_free_object_name()}[out_mode == "object"]
 
-with open(ASSEMBLY_NAME, 'w') as f: f.write(translator.translate(tokenized))
+with open(ASSEMBLY_NAME, 'w') as f: f.write(translator.translate(tokenized, timestamp))
 
 if out_mode == "asm":
     print(f"Successfully { {True: "force-", False: ""}[forcecompiled]}compiled file {in_} to NASM x86_64bit Assembly with {errorcount} errors.")

@@ -7,7 +7,7 @@ SYSCALLS = {
     "read": 0,
 }
 
-def translate(tokenized):
+def translate(tokenized, timestamp):
     assembly = "global _start\n_start:\n"
     def    line(in_):   return "    " + in_ + "\n"
     def comment(in_): return "    ; " + in_ + "\n"
@@ -30,6 +30,6 @@ def translate(tokenized):
     assembly += line("mov rax, 60")
     assembly += line("mov rdi, 0")
     assembly += line("syscall")
-    assembly += comment(f"Compiled by Sabbah compiler on {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}")
+    if timestamp: assembly += comment(f"Compiled by Sabbah compiler on {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}")
     
     return assembly
