@@ -18,5 +18,3 @@ def remove_comments(input_string: str) -> str:
         result.append(input_string[i])
         i += 1
     return ''.join(result)
-
-print(remove_comments("exit 0; /* comment */"))

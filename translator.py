@@ -1,4 +1,5 @@
 from lexer import *
+from datetime import datetime
 
 SYSCALLS = {
     "exit": 60,
@@ -8,7 +9,8 @@ SYSCALLS = {
 
 def translate(tokenized):
     assembly = "global _start\n_start:\n"
-    def line(in_): return "    " + in_ + "\n"
+    def    line(in_):   return "    " + in_ + "\n"
+    def comment(in_): return "    ; " + in_ + "\n"
     tokenindex = 0
     outer = 0
     while outer < len(tokenized):
@@ -28,5 +30,6 @@ def translate(tokenized):
     assembly += line("mov rax, 60")
     assembly += line("mov rdi, 0")
     assembly += line("syscall")
+    assembly += comment(f"Compiled by Sabbah compiler on {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}")
     
     return assembly
