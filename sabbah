@@ -152,4 +152,4 @@ elif out_mode == "default":
     print(f"Successfully { {True: "force-", False: ""}[forcecompiled]}compiled and linked file {in_} to an executable with {errorcount} errors.")
     sys.exit(0)
 else:
-    error("something went wrong.")
+    error(f"invalid output mode: {out_mode}. this should never happen. please report this to https://github.com/Pauytramosio/compiler")
