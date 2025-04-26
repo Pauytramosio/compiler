@@ -43,8 +43,8 @@ i = 1
 
 out_mode = "default"
 
-in_: str = None
-out: str = None
+in_ = None
+out = None
 
 timestamp = False
 

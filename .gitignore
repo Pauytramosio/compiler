@@ -4,3 +4,4 @@ tester.py
 .venv/
 test*
 test.*
+__vscode__/
